@@ -10,6 +10,9 @@ void hList_init(hList * hList_t)
     hList_t->hNode_head.next = &(hList_t->hNode_head);
     hList_t->hNode_head.prev = hList_t->hNode_head.next;
     hList_t->Node_count = 0;
+
+    
+
 }
 
 uint32_t hList_count(hList * hList_t)
