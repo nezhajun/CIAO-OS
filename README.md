@@ -1,3 +1,2 @@
 # Hello_RTOS
 this is a project for writing RTOS by myself...
-ddddddddddddd
