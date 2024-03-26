@@ -9,6 +9,7 @@ void hList_init(hList * list_t)
 {
     list_t->hNode_head = (void *)0;
     list_t->Node_count = 0;
+    
 }
 
 uint32_t hList_count(hList * list_t)
