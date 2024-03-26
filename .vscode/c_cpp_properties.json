@@ -5,7 +5,9 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/KEIL_PRJ/SRC",
-                "${workspaceFolder}/KEIL_PRJ/SRC/include"
+                "${workspaceFolder}/KEIL_PRJ/SRC/include",
+                // "F:\\software\\Keil_v5\\ARM\\CMSIS\\5.7.0\\Device\\ARM\\ARMCM3\\Include",
+                // "F:\\software\\Keil_v5\\ARM\\CMSIS\\5.7.0\\CMSIS\\Core\\Include"
             ],
             "defines": [
                 "_DEBUG",
@@ -14,7 +16,7 @@
             ],
             "windowsSdkVersion": "10.0.22621.0",
             "compilerPath": "cl.exe",
-            "cStandard": "c17",
+            "cStandard": "c99",
             "cppStandard": "c++17",
             "intelliSenseMode": "windows-msvc-x64"
         }

@@ -11,13 +11,19 @@ typedef struct _hNode
 
 typedef struct _hList
 {
-    hNode hNode_head;
+    hNode * hNode_head;
     uint32_t Node_count;
 }hList;
 
-void hNode_init(hNode * hNode_t);
-void hList_init(hList * hList_t);
-uint32_t hList_count(void);
-void tListAddFirst (hList * hList_t, hNode * node_t);
+#define hNodeParent(node_t, parent, name) (parent*)((void *)node_t - (void *)&((parent *)0)->name)
+
+void hNode_init(hNode * node_t);
+void hList_init(hList * list_t);
+uint32_t hList_count(hList * list_t);
+void hListAddFirst (hList * list_t, hNode * node_t);
+void hListRemove (hList * list_t, hNode * node_t);
+hNode * hListPrev (hList * list_t, hNode * node_t);
+hNode * hListNext (hList * list_t, hNode * node_t);
+void hListRunCircle(hList * list_t);
 
 #endif // !_HLIST_H

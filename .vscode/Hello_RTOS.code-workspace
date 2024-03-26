@@ -3,5 +3,15 @@
         {
             "path": ".."
         }
-    ]
+    ],
+    "settings": {
+        "files.associations": {
+            "hbitmap.h": "c",
+            "htask.h": "c",
+            "htask_core.h": "c",
+            "stdint.h": "c",
+            "armcm3.h": "c",
+            "hlist.h": "c"
+        }
+    }
 }
