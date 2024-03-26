@@ -59,19 +59,21 @@ hTaskErrorType hTask_init(hTask * hTask_t,char * task_name,void (* func_entry)(v
     hNode_init(&(hTask_t->linkNode));
     hListAddFirst(&hTaskReadyTable[hTask_t->priority],&(hTask_t->linkNode));
     hBitmapSet(&hTaskBitmap,hTask_t->priority);
+		
+		return OKAY;
 }
 
 
-void SysTick_Handler ()
+void SysTick_Handler (void)
 {
 	hTaskSystemTick_Handler();
 }
 
-void hTaskSystemTick_Handler()
+void hTaskSystemTick_Handler(void)
 {
     if(--current_hTask_t->time_slice == 0) // time slice turn run
     {
-        current_hTask_t->time_slice == TIME_SLICE_CNT;
+        current_hTask_t->time_slice = TIME_SLICE_CNT;
         hListRunCircle(&hTaskReadyTable[current_hTask_t->priority]);
         current_hTask_t->state = TASK_READY;
     }
@@ -79,7 +81,7 @@ void hTaskSystemTick_Handler()
     hTaskSchedule();
 }
 
-void hTaskSchedule()
+void hTaskSchedule(void)
 {
     hTask* hTaskPrio_t = hTaskGetMaxPrio();
     if( current_hTask_t != hTaskPrio_t)
@@ -111,7 +113,7 @@ void hTaskWakeUp(hTask * hTask_t)
 {
     if( hTask_t->state == TASK_BLOCKED )
     {
-        hTask_t->state == TASK_READY;
+        hTask_t->state = TASK_READY;
         hListAddFirst(&hTaskReadyTable[hTask_t->priority],&(hTask_t->linkNode));
         hBitmapSet(&hTaskBitmap,hTask_t->priority);
         hListRemove(&hTaskBlockedList,&(hTask_t->linkNode));
@@ -141,7 +143,7 @@ void hTaskResume(hTask * hTask_t)
 {
     if( hTask_t->state == TASK_SUSPEND )
     {
-        hTask_t->state == TASK_READY;
+        hTask_t->state = TASK_READY;
         hListAddFirst(&hTaskReadyTable[hTask_t->priority],&(hTask_t->linkNode));
         hBitmapSet(&hTaskBitmap,hTask_t->priority);
         hListRemove(&hTaskSuspendList,&(hTask_t->linkNode));
@@ -156,7 +158,7 @@ void hTaskDelay(uint32_t ticks)
     hTaskChoke(current_hTask_t);
 }
 
-void hTask_Param_init()
+void hTask_Param_init(void)
 {
     hBitmap_init(&hTaskBitmap);
     hTaskList_init();
@@ -170,7 +172,7 @@ void hTask_Param_init()
 
 }
 
-void hTaskIdle_thread()
+void hTaskIdle_thread(void * param)
 {
 
 }

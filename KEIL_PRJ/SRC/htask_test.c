@@ -52,9 +52,9 @@ void hTask02_func(void * param)
 void htask_test()
 {
     hTaskErrorType hTaskType;
-    hTaskType = hTask_init(&hTask01,\
-                            "hTask01",\
-                            hTask01_func,\
+    hTaskType = hTask_init(&hTask01, \
+                            "hTask01", \
+                            hTask01_func, \
                             (void *) 0, \
                             3 , \
                             &hTask01_env[64]);
