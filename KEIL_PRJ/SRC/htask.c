@@ -93,7 +93,7 @@ void hTask_schedule()
 }
 
 
-void hTask_choke(hTask * hTask_t)
+void hTaskChoke(hTask * hTask_t)
 {
     if(hTask_t->state == TASK_READY || hTask_t->state == TASK_RUNNING)
     {
@@ -104,10 +104,23 @@ void hTask_choke(hTask * hTask_t)
     }
 }
 
-void hTask_delay(uint32_t ticks)
+
+void hTaskSuspend()
+{
+
+}
+
+
+void hTaskResume()
+{
+
+}
+
+
+void hTaskDelay(uint32_t ticks)
 {
     current_hTask_t->delay_ticks = ticks;
-    hTask_choke(current_hTask_t);
+    hTaskChoke(current_hTask_t);
 }
 
 void hTask_init()
