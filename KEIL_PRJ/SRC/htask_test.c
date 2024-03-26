@@ -1,5 +1,6 @@
 #include "htask_core.h"
 #include "htask_test.h"
+#include "htask.h"
 
 extern hTask * current_hTask;
 extern hTask * next_hTask;
@@ -7,18 +8,8 @@ extern hTask * next_hTask;
 hTaskStack hTask01_env[64];
 hTaskStack hTask02_env[64];
 
-hTask hTask01 =   { 
-                    &hTask01_env[64], \
-                    "hTask01", \
-                    hTask01_func, \
-                    (void *)0x1234, \
-                    3 };
-hTask hTask02 =   { 
-                    &hTask02_env[64], \
-                    "hTask02", \
-                    hTask02_func, \
-                    (void *)0x6978, \
-                    3 };
+hTask hTask01;
+hTask hTask02;
 
 
 uint8_t flag01;
@@ -60,5 +51,18 @@ void hTask02_func(void * param)
 
 void htask_test()
 {
+    hTaskErrorType hTaskType;
+    hTaskType = hTask_init(&hTask01,\
+                            "hTask01",\
+                            hTask01_func,\
+                            (void *) 0, \
+                            3 , \
+                            &hTask01_env[64]);
 
+    hTaskType = hTask_init(&hTask02,\
+                            "hTask01",\
+                            hTask02_func,\
+                            (void *) 0, \
+                            3 , \
+                            &hTask02_env[64]);
 }

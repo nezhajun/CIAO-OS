@@ -6,7 +6,7 @@ hBitmap hTaskBitmap;
 
 hList hTaskReadyTable[32];
 hList hTaskBlockedList;
-hList hTaskStopList;
+hList hTaskSuspendList;
 
 hTask * current_hTask_t;
 hTask * next_hTask_t;
@@ -24,10 +24,10 @@ hTask * hTaskGetMaxPrio()
 
 void hTaskList_init()
 {
-    for (uint16_t i = 0; i < 32; i++)
-        hList_init(&hTaskReadyTable[i]);
+    uint16_t i;
+    for (i = 0; i < 32; i++) hList_init(&hTaskReadyTable[i]);
     hList_init(&hTaskBlockedList); 
-    hList_init(&hTaskStopList);
+    hList_init(&hTaskSuspendList);
 }
 
 hTaskErrorType hTask_init(hTask * hTask_t,char * task_name,void (* func_entry)(void *),void * param,uint32_t priority, hTaskStack * stack)
@@ -54,11 +54,10 @@ hTaskErrorType hTask_init(hTask * hTask_t,char * task_name,void (* func_entry)(v
     hTask_t->stack = stack;
     hTask_t->priority = priority;
     hTask_t->delay_ticks = 0;
-    hTask_t->time_slice = _time_slice;
     hTask_t->time_slice = TIME_SLICE_CNT;
     hTask_t->state = TASK_READY;
     hNode_init(&(hTask_t->linkNode));
-    tListAddFirst(&hTaskReadyTable[hTask_t->priority],&(hTask_t->linkNode));
+    hListAddFirst(&hTaskReadyTable[hTask_t->priority],&(hTask_t->linkNode));
     hBitmapSet(&hTaskBitmap,hTask_t->priority);
 }
 
@@ -77,15 +76,14 @@ void hTaskSystemTick_Handler()
         current_hTask_t->state = TASK_READY;
     }
 
-
-    hTask_schedule();
+    hTaskSchedule();
 }
 
-void hTask_schedule()
+void hTaskSchedule()
 {
     hTask* hTaskPrio_t = hTaskGetMaxPrio();
     if( current_hTask_t != hTaskPrio_t)
-    {
+    {  
         next_hTask_t = hTaskPrio_t;
         next_hTask_t->state = TASK_RUNNING;
         hTaskSwitch();
@@ -95,25 +93,60 @@ void hTask_schedule()
 
 void hTaskChoke(hTask * hTask_t)
 {
-    if(hTask_t->state == TASK_READY || hTask_t->state == TASK_RUNNING)
+    if(hTask_t->state == TASK_RUNNING)
     {
         hTask_t->state = TASK_BLOCKED;
-        hListAddFirst(&hTaskBlockedList,hTask_t->linkNode);
-        hListRemove(&hTaskReadyTable[hTask_t->priority],hTask_t->linkNode);
-        hTask_schedule();
+        hListAddFirst(&hTaskBlockedList,&(hTask_t->linkNode));
+        hListRemove(&hTaskReadyTable[hTask_t->priority],&(hTask_t->linkNode));
+        if ( hTaskReadyTable[(hTask_t->priority)].hNode_head == (void *)0 )
+        {
+            hBitmapClear(&hTaskBitmap,hTask_t->priority);
+        }
+        hTaskSchedule();
     }
 }
 
 
-void hTaskSuspend()
+void hTaskWakeUp(hTask * hTask_t)
 {
-
+    if( hTask_t->state == TASK_BLOCKED )
+    {
+        hTask_t->state == TASK_READY;
+        hListAddFirst(&hTaskReadyTable[hTask_t->priority],&(hTask_t->linkNode));
+        hBitmapSet(&hTaskBitmap,hTask_t->priority);
+        hListRemove(&hTaskBlockedList,&(hTask_t->linkNode));
+        hTaskSchedule();
+    }
 }
 
 
-void hTaskResume()
+void hTaskSuspend(hTask * hTask_t)
 {
+    if(hTask_t->state == TASK_RUNNING || hTask_t->state == TASK_READY)
+    {
+        hTask_t->state = TASK_SUSPEND;
+        hListAddFirst(&hTaskSuspendList,&(hTask_t->linkNode));
+        hListRemove(&hTaskReadyTable[hTask_t->priority],&(hTask_t->linkNode));
+        if ( hTaskReadyTable[(hTask_t->priority)].hNode_head == (void *)0 )
+        {
+            hBitmapClear(&hTaskBitmap,hTask_t->priority);
+        }
+        
+        hTaskSchedule();
+    }
+}
 
+
+void hTaskResume(hTask * hTask_t)
+{
+    if( hTask_t->state == TASK_SUSPEND )
+    {
+        hTask_t->state == TASK_READY;
+        hListAddFirst(&hTaskReadyTable[hTask_t->priority],&(hTask_t->linkNode));
+        hBitmapSet(&hTaskBitmap,hTask_t->priority);
+        hListRemove(&hTaskSuspendList,&(hTask_t->linkNode));
+        hTaskSchedule();
+    }
 }
 
 
@@ -123,7 +156,7 @@ void hTaskDelay(uint32_t ticks)
     hTaskChoke(current_hTask_t);
 }
 
-void hTask_init()
+void hTask_Param_init()
 {
     hBitmap_init(&hTaskBitmap);
     hTaskList_init();
@@ -142,3 +175,10 @@ void hTaskIdle_thread()
 
 }
 
+
+void hTaskRunFirst (void)
+{
+	__set_PSP(0);
+	MEM8(NVIC_SYSPRI2) = NVIC_PENDSV_PRI;
+	MEM32(NVIC_INT_CTRL) = NVIC_PENDSVSET;
+}

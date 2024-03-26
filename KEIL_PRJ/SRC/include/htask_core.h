@@ -28,7 +28,7 @@ typedef enum
     TASK_RUNNING,
     TASK_READY,
     TASK_BLOCKED,
-    TASK_SUSPENDED,
+    TASK_SUSPEND,
     TASK_ZOMBIE,
 }hTaskState;
 
@@ -42,14 +42,6 @@ typedef struct _hTask
     uint32_t priority;
     hTaskState state;
 }hTask;
-
-
-inline void hTaskRunFirst (void)
-{
-	__set_PSP(0);
-	MEM8(NVIC_SYSPRI2) = NVIC_PENDSV_PRI;
-	MEM32(NVIC_INT_CTRL) = NVIC_PENDSVSET;
-}
 
 inline void hTaskSwitch (void)
 {

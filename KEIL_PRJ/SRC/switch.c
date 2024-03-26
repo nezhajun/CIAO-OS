@@ -1,7 +1,7 @@
 #include "htask_core.h"
 
-extern hTask * current_hTask;
-extern hTask * next_hTask;
+extern hTask * current_hTask_t;
+extern hTask * next_hTask_t;
 
 __asm void PendSV_Handler(void)
 {
@@ -9,16 +9,16 @@ __asm void PendSV_Handler(void)
     import next_hTask_t
 
     mrs r0, psp
-	cbz r0, hTaskRunfirst_
+	cbz r0, hTaskfirst_
 
 	stmdb r0!,{r4-r11}
-	ldr r1,=current_hTask
+	ldr r1,=current_hTask_t
 	ldr r1, [r1]
 	str r0, [r1]
 
-hTaskRunfirst_
-	ldr r0,=current_hTask
-	ldr r1,=next_hTask
+hTaskfirst_
+	ldr r0,=current_hTask_t
+	ldr r1,=next_hTask_t
 	ldr r2, [r1]
 	str r2, [r0]
 

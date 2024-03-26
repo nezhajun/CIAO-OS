@@ -11,7 +11,8 @@
             "htask_core.h": "c",
             "stdint.h": "c",
             "armcm3.h": "c",
-            "hlist.h": "c"
+            "hlist.h": "c",
+            "htask_test.h": "c"
         }
     }
 }

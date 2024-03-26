@@ -54,7 +54,7 @@ uint32_t hBitmapGetFirstSet(hBitmap * hBitmap_t)
 	}
 	else
 	{
-		return tBitmapPosCount();
+		return 32;
 	}    
 }
 

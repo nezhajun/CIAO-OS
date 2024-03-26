@@ -322,10 +322,10 @@
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>2</wLevel>
+            <wLevel>1</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
-            <uC99>0</uC99>
+            <uC99>1</uC99>
             <uGnu>0</uGnu>
             <useXO>0</useXO>
             <v6Lang>3</v6Lang>
@@ -384,9 +384,14 @@
           <GroupName>SRC</GroupName>
           <Files>
             <File>
-              <FileName>main.c</FileName>
+              <FileName>hbitmap.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\SRC\main.c</FilePath>
+              <FilePath>.\SRC\hbitmap.c</FilePath>
+            </File>
+            <File>
+              <FileName>hlist.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\SRC\hlist.c</FilePath>
             </File>
             <File>
               <FileName>htask.c</FileName>
@@ -397,6 +402,11 @@
               <FileName>htask_test.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\SRC\htask_test.c</FilePath>
+            </File>
+            <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\SRC\main.c</FilePath>
             </File>
             <File>
               <FileName>switch.c</FileName>
