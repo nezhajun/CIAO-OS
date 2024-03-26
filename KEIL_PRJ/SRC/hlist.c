@@ -22,7 +22,7 @@ void hListAddFirst (hList * list_t, hNode * node_t)
     if( list_t->hNode_head == (void *)0) //only hNode_head
     {
         node_t->next = node_t->prev = node_t;
-        list_t->hNode_head == node_t;
+        list_t->hNode_head = node_t;
     }
     else
     {
