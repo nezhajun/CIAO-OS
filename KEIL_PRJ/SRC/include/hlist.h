@@ -17,7 +17,7 @@ typedef struct _hList
 
 void hNode_init(hNode * node_t);
 void hList_init(hList * list_t);
-uint32_t hList_count(hList * list_t);
+unsigned int hList_count(hList * list_t);
 void hListAddFirst (hList * list_t, hNode * node_t);
 void hListRemove (hList * list_t, hNode * node_t);
 hNode * hListPrev (hList * list_t, hNode * node_t);

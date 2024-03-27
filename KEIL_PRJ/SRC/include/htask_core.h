@@ -20,13 +20,7 @@ typedef enum
 {
     ScheduleEnable,
     ScheduleDisable,
-}ScheduleType;
-
-typedef struct 
-{
-    ScheduleType cur_state;
-    ScheduleType pre_state;
-}hTaskScheduleCtrl;
+}ScheduleStateType;
 
 
 typedef enum
@@ -49,11 +43,20 @@ typedef struct _hTask
     hTaskStack * stack;
     hNode linkNode;
     char hTaskName[TASK_NAME_SIZE];
-    uint32_t delay_ticks;
-    uint32_t time_slice;
-    uint32_t priority;
+    unsigned int delay_ticks;
+    unsigned int time_slice;
+    unsigned int priority;
     hTaskState state;
 }hTask;
+
+#define Schedule_Enter_Critical(ScheduleState_,local_tmp_) { \
+    local_tmp_ = ScheduleState_; \
+    ScheduleState_ = ScheduleDisable; \
+}
+
+#define Schedule_Exit_Critical(ScheduleState_,local_tmp_) { \
+    ScheduleState_ = local_tmp_; \
+}
 
 inline void hTaskSwitch (void)
 {

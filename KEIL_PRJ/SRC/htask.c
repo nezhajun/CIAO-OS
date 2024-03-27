@@ -2,7 +2,7 @@
 #include "hlist.h"
 #include "hbitmap.h"
 
-hTaskScheduleCtrl hTaskScheduleState;
+ScheduleStateType hTaskScheduleState;
 
 hBitmap hTaskBitmap;
 
@@ -16,13 +16,10 @@ hTask * next_hTask_t;
 hTaskStack hTaskIdle_env[64];
 hTask hTaskIdle;
 
-
-void ScheduleModeInit(hTaskScheduleCtrl * ScheduleState_t)
-{
-    ScheduleState_t->cur_state = ScheduleEnable;
-    ScheduleState_t->pre_state = ScheduleEnable;
+void ScheduleStateInit()
+{ 
+    hTaskScheduleState = ScheduleEnable;
 }
-
 
 hTask * hTaskGetMaxPrio()
 {
@@ -74,19 +71,25 @@ hTaskErrorType hTask_init(hTask * hTask_t,char * task_name,void (* func_entry)(v
 
 void tTaskSystemTickHandler(void)
 {
-    if(--current_hTask_t->time_slice == 0) // time slice turn run
+    if( hTaskScheduleState == ScheduleEnable )
     {
-        current_hTask_t->time_slice = TIME_SLICE_CNT;
-        hListRunCircle(&hTaskReadyTable[current_hTask_t->priority]);
-        current_hTask_t->state = TASK_READY;
-    }
+        if(--current_hTask_t->time_slice == 0) // time slice turn run
+        {
+            current_hTask_t->time_slice = TIME_SLICE_CNT;
+            hListRunCircle(&hTaskReadyTable[current_hTask_t->priority]);
+            current_hTask_t->state = TASK_READY;
+        }
 
-    hTaskSchedule();
+        hTaskSchedule();
+    }
 }
 
 void hTaskSchedule(void)
 {
-    hTask* hTaskPrio_t = hTaskGetMaxPrio();
+    hTask* hTaskPrio_t;
+    if( hTaskScheduleState == ScheduleEnable ) //如果ScheduleDisable 禁止了定时中断切换任务，就保证目前任务持续运行
+        hTaskPrio_t = hTaskGetMaxPrio();
+
     if( current_hTask_t != hTaskPrio_t)
     {  
         next_hTask_t = hTaskPrio_t;
