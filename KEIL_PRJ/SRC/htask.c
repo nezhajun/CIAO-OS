@@ -2,6 +2,8 @@
 #include "hlist.h"
 #include "hbitmap.h"
 
+hTaskScheduleCtrl hTaskScheduleState;
+
 hBitmap hTaskBitmap;
 
 hList hTaskReadyTable[32];
@@ -13,6 +15,13 @@ hTask * next_hTask_t;
 
 hTaskStack hTaskIdle_env[64];
 hTask hTaskIdle;
+
+
+void ScheduleModeInit(hTaskScheduleCtrl * ScheduleState_t)
+{
+    ScheduleState_t->cur_state = ScheduleEnable;
+    ScheduleState_t->pre_state = ScheduleEnable;
+}
 
 
 hTask * hTaskGetMaxPrio()

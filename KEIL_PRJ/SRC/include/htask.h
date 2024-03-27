@@ -7,7 +7,7 @@
 
 
 void hTaskList_init(void);
-hTaskErrorType hTask_init(hTask * hTask_t,char * task_name,void (* func_entry)(void *),void * param,uint32_t priority, hTaskStack * stack);
+hTaskErrorType hTask_init(hTask * hTask_t,char * task_name,void (* func_entry)(void *),void * param,unsigned int priority, hTaskStack * stack);
 void SysTick_Handler (void);
 void tTaskSystemTickHandler(void);
 void hTaskSchedule(void);
@@ -15,7 +15,7 @@ void hTaskChoke(hTask * hTask_t);
 void hTaskWakeUp(hTask * hTask_t);
 void hTaskSuspend(hTask * hTask_t);
 void hTaskResume(hTask * hTask_t);
-void hTaskDelay(uint32_t ticks);
+void hTaskDelay(unsigned int ticks);
 void hTask_Param_init(void);
 
 void hTaskIdle_thread(void * param);

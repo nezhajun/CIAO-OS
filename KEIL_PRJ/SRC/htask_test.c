@@ -12,12 +12,12 @@ hTask hTask01;
 hTask hTask02;
 
 
-uint8_t flag01;
-uint8_t flag02;
-uint32_t num1;
-uint32_t num2;
+unsigned char flag01;
+unsigned char flag02;
+unsigned int num1;
+unsigned int num2;
 
-void delay_t(uint32_t cnt)
+void delay_t(unsigned int cnt)
 {
     while(--cnt);
 }
@@ -25,7 +25,7 @@ void delay_t(uint32_t cnt)
 
 void hTask01_func(void * param)
 {
-    num1 = *(uint32_t *)(param);
+    num1 = *(unsigned int *)(param);
     for (;;)
     {
         flag01 = 0;
@@ -39,7 +39,7 @@ void hTask01_func(void * param)
 
 void hTask02_func(void * param)
 {
-    num2 = *(uint32_t *)(param);
+    num2 = *(unsigned int *)(param);
     for (;;)
     {
         flag02 = 0;

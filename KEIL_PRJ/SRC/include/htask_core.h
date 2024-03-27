@@ -1,7 +1,6 @@
 #ifndef __HTASK_CORE_H
 #define __HTASK_CORE_H
 
-#include "stdint.h"
 #include "hlist.h"
 #include "ARMCM3.h"
 
@@ -15,7 +14,20 @@
 
 #define TASK_NAME_SIZE 20
 
-typedef uint32_t hTaskStack;
+typedef unsigned int hTaskStack;
+
+typedef enum
+{
+    ScheduleEnable,
+    ScheduleDisable,
+}ScheduleType;
+
+typedef struct 
+{
+    ScheduleType cur_state;
+    ScheduleType pre_state;
+}hTaskScheduleCtrl;
+
 
 typedef enum
 {

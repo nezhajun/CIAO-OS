@@ -6,7 +6,7 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/KEIL_PRJ/SRC",
                 "${workspaceFolder}/KEIL_PRJ/SRC/include",
-                "D:\\CODE\\MDK\\Keil_v5\\ARM\\CMSIS\\5.7.0\\Device\\ARM\\ARMCM3\\Include",
+                // "D:\\CODE\\MDK\\Keil_v5\\ARM\\CMSIS\\5.7.0\\Device\\ARM\\ARMCM3\\Include",
                 // "F:\\software\\Keil_v5\\ARM\\CMSIS\\5.7.0\\CMSIS\\Core\\Include"
             ],
             "defines": [

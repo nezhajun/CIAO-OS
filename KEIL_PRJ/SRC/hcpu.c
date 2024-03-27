@@ -1,6 +1,6 @@
 #include "ARMCM3.h"
 
-void tSetSysTickPeriod (uint32_t ms)
+void tSetSysTickPeriod (unsigned int ms)
 {
 	SysTick->LOAD = ms * SystemCoreClock / 1000 - 1;
 	NVIC_SetPriority(SysTick_IRQn, (1 << __NVIC_PRIO_BITS) - 1);

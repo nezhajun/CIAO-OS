@@ -12,7 +12,7 @@ void hList_init(hList * list_t)
     
 }
 
-uint32_t hList_count(hList * list_t)
+unsigned int hList_count(hList * list_t)
 {
     return list_t->Node_count;
 }

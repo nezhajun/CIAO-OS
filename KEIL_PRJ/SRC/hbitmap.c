@@ -5,19 +5,19 @@ void hBitmap_init(hBitmap * hBitmap_t)
     hBitmap_t->bitmap = 0;
 }
 
-void hBitmapSet (hBitmap * hBitmap_t, uint32_t pos)
+void hBitmapSet (hBitmap * hBitmap_t, unsigned int pos)
 {
     hBitmap_t->bitmap |=(1<<pos);
 }
 
-void hBitmapClear (hBitmap * hBitmap_t, uint32_t pos)
+void hBitmapClear (hBitmap * hBitmap_t, unsigned int pos)
 {
     hBitmap_t->bitmap &=(1<<pos);
 }
 
-uint32_t hBitmapGetFirstSet(hBitmap * hBitmap_t)
+unsigned int hBitmapGetFirstSet(hBitmap * hBitmap_t)
 {
-	static const uint8_t quickFindTable[] =
+	static const unsigned char quickFindTable[] =
 	{
 		/* 00 */ 0xff, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
 	    /* 10 */ 4,    0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,

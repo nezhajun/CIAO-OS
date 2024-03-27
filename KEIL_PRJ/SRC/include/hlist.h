@@ -1,8 +1,6 @@
 #ifndef _HLIST_H
 #define _HLIST_H
 
-#include "stdint.h"
-
 typedef struct _hNode
 {
     struct _hNode *prev;
@@ -12,10 +10,10 @@ typedef struct _hNode
 typedef struct _hList
 {
     hNode * hNode_head;
-    uint32_t Node_count;
+    unsigned int Node_count;
 }hList;
 
-#define hNodeParent(node_t, parent, name) (parent*)((uint32_t)node_t - (uint32_t)&((parent *)0)->name)
+#define hNodeParent(node_t, parent, name) (parent*)((unsigned int)node_t - (unsigned int)&((parent *)0)->name)
 
 void hNode_init(hNode * node_t);
 void hList_init(hList * list_t);
