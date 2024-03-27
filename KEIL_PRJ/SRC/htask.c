@@ -63,13 +63,7 @@ hTaskErrorType hTask_init(hTask * hTask_t,char * task_name,void (* func_entry)(v
 		return OKAY;
 }
 
-
-void SysTick_Handler (void)
-{
-	hTaskSystemTick_Handler();
-}
-
-void hTaskSystemTick_Handler(void)
+void tTaskSystemTickHandler(void)
 {
     if(--current_hTask_t->time_slice == 0) // time slice turn run
     {

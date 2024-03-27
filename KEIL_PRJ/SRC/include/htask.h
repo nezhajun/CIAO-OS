@@ -9,7 +9,7 @@
 void hTaskList_init(void);
 hTaskErrorType hTask_init(hTask * hTask_t,char * task_name,void (* func_entry)(void *),void * param,uint32_t priority, hTaskStack * stack);
 void SysTick_Handler (void);
-void hTaskSystemTick_Handler(void);
+void tTaskSystemTickHandler(void);
 void hTaskSchedule(void);
 void hTaskChoke(hTask * hTask_t);
 void hTaskWakeUp(hTask * hTask_t);
