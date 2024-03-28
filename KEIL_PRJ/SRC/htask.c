@@ -9,6 +9,7 @@ hBitmap hTaskBitmap;
 hList hTaskReadyTable[32];
 hList hTaskBlockedList;
 hList hTaskSuspendList;
+hList hTaskDelayList;
 
 hTask * current_hTask_t;
 hTask * next_hTask_t;
@@ -71,24 +72,41 @@ hTaskErrorType hTask_init(hTask * hTask_t,char * task_name,void (* func_entry)(v
 
 void tTaskSystemTickHandler(void)
 {
-    if( hTaskScheduleState == ScheduleEnable )
+    if( hTaskScheduleState != ScheduleEnable )
     {
-        if(--current_hTask_t->time_slice == 0) // time slice turn run
-        {
-            current_hTask_t->time_slice = TIME_SLICE_CNT;
-            hListRunCircle(&hTaskReadyTable[current_hTask_t->priority]);
-            current_hTask_t->state = TASK_READY;
-        }
-
-        hTaskSchedule();
+        return;
     }
+
+    if(--current_hTask_t->time_slice == 0) // time slice turn run
+    {
+        current_hTask_t->time_slice = TIME_SLICE_CNT;
+        hListRunCircle(&hTaskReadyTable[current_hTask_t->priority]);
+        current_hTask_t->state = TASK_READY;
+    }
+
+    for(hNode* node_t = hTaskDelaydList.hNode_head; node_t->next != hTaskDelaydList.hNode_head; node_t=node_t->next)
+    {
+        hTask * hTask_t = hNodeParent(node_t, hTask, linkNode);
+        if( --(hTask_t->delay_ticks) == 0)
+        {
+            hListRemove(&hTaskDelayList,&(hTask_t->linkNode));
+            hListAddFirst(&hTaskReadyTable[hTask_t->priority],&(hTask_t->linkNode));
+            hTask_t->state = TASK_READY;
+        }
+    }
+    
+    hTaskSchedule();
 }
 
 void hTaskSchedule(void)
 {
+    if( hTaskScheduleState != ScheduleEnable )
+    {
+        return;
+    }
+    
     hTask* hTaskPrio_t;
-    if( hTaskScheduleState == ScheduleEnable ) //如果ScheduleDisable 禁止了定时中断切换任务，就保证目前任务持续运行
-        hTaskPrio_t = hTaskGetMaxPrio();
+    hTaskPrio_t = hTaskGetMaxPrio();
 
     if( current_hTask_t != hTaskPrio_t)
     {  
@@ -99,69 +117,104 @@ void hTaskSchedule(void)
 }
 
 
-void hTaskChoke(hTask * hTask_t)
+void hTaskChoke(hTask * hTask_t,hTaskChokeType choke_type)
 {
-    if(hTask_t->state == TASK_RUNNING)
+    ScheduleStateType local_tmp;
+    Schedule_Enter_Critical(hTaskScheduleState,local_tmp);
+    if(hTask_t->state != TASK_RUNNING)
     {
-        hTask_t->state = TASK_BLOCKED;
-        hListAddFirst(&hTaskBlockedList,&(hTask_t->linkNode));
-        hListRemove(&hTaskReadyTable[hTask_t->priority],&(hTask_t->linkNode));
-        if ( hTaskReadyTable[(hTask_t->priority)].hNode_head == (void *)0 )
-        {
-            hBitmapClear(&hTaskBitmap,hTask_t->priority);
-        }
-        hTaskSchedule();
+        Schedule_Exit_Critical(hTaskScheduleState,local_tmp);
+        return;
     }
+    hTask_t->state = TASK_BLOCKED;
+    if (choke_type == CHOKE_DELAY) //CHOKE_DELAY
+    {
+        hListAddFirst(&hTaskDelayList,&(hTask_t->linkNode)); 
+    }
+    else  //CHOKE_EVENT
+    {
+        hListAddFirst(&hTaskBlockedList,&(hTask_t->linkNode));
+    }
+    hListRemove(&hTaskReadyTable[hTask_t->priority],&(hTask_t->linkNode));
+    if ( hTaskReadyTable[(hTask_t->priority)].hNode_head == (void *)0 )
+    {
+        hBitmapClear(&hTaskBitmap,hTask_t->priority);
+    }
+    Schedule_Exit_Critical(hTaskScheduleState,local_tmp);
+    hTaskSchedule();
 }
 
 
 void hTaskWakeUp(hTask * hTask_t)
 {
-    if( hTask_t->state == TASK_BLOCKED )
+    ScheduleStateType local_tmp;
+    Schedule_Enter_Critical(hTaskScheduleState,local_tmp);
+    if( hTask_t->state != TASK_BLOCKED )
     {
-        hTask_t->state = TASK_READY;
-        hListAddFirst(&hTaskReadyTable[hTask_t->priority],&(hTask_t->linkNode));
-        hBitmapSet(&hTaskBitmap,hTask_t->priority);
-        hListRemove(&hTaskBlockedList,&(hTask_t->linkNode));
-        hTaskSchedule();
+        Schedule_Exit_Critical(hTaskScheduleState,local_tmp);
+        return;        
     }
+    hTask_t->state = TASK_READY;
+    hListAddFirst(&hTaskReadyTable[hTask_t->priority],&(hTask_t->linkNode));
+    hListRemove(&hTaskBlockedList,&(hTask_t->linkNode));
+    hBitmapSet(&hTaskBitmap,hTask_t->priority);
+    Schedule_Exit_Critical(hTaskScheduleState,local_tmp);
+    hTaskSchedule();
 }
 
 
 void hTaskSuspend(hTask * hTask_t)
 {
-    if(hTask_t->state == TASK_RUNNING || hTask_t->state == TASK_READY)
+    ScheduleStateType local_tmp;
+    Schedule_Enter_Critical(hTaskScheduleState,local_tmp);
+    if(hTask_t->state != TASK_RUNNING && hTask_t->state != TASK_READY)
     {
-        hTask_t->state = TASK_SUSPEND;
-        hListAddFirst(&hTaskSuspendList,&(hTask_t->linkNode));
-        hListRemove(&hTaskReadyTable[hTask_t->priority],&(hTask_t->linkNode));
-        if ( hTaskReadyTable[(hTask_t->priority)].hNode_head == (void *)0 )
-        {
-            hBitmapClear(&hTaskBitmap,hTask_t->priority);
-        }
-        
-        hTaskSchedule();
+        Schedule_Exit_Critical(hTaskScheduleState,local_tmp);
+        return;
     }
+    hTask_t->state = TASK_SUSPEND;
+    hListAddFirst(&hTaskSuspendList,&(hTask_t->linkNode));
+    hListRemove(&hTaskReadyTable[hTask_t->priority],&(hTask_t->linkNode));
+    if ( hTaskReadyTable[(hTask_t->priority)].hNode_head == (void *)0 )
+    {
+        hBitmapClear(&hTaskBitmap,hTask_t->priority);
+    }
+    Schedule_Exit_Critical(hTaskScheduleState,local_tmp);
+    hTaskSchedule();
 }
 
 
 void hTaskResume(hTask * hTask_t)
 {
-    if( hTask_t->state == TASK_SUSPEND )
+    ScheduleStateType local_tmp;
+    Schedule_Enter_Critical(hTaskScheduleState,local_tmp);
+    if( hTask_t->state != TASK_SUSPEND )
     {
-        hTask_t->state = TASK_READY;
-        hListAddFirst(&hTaskReadyTable[hTask_t->priority],&(hTask_t->linkNode));
-        hBitmapSet(&hTaskBitmap,hTask_t->priority);
-        hListRemove(&hTaskSuspendList,&(hTask_t->linkNode));
-        hTaskSchedule();
+        Schedule_Exit_Critical(hTaskScheduleState,local_tmp);
+        return;
     }
+    hTask_t->state = TASK_READY;
+    hListAddFirst(&hTaskReadyTable[hTask_t->priority],&(hTask_t->linkNode));
+    hBitmapSet(&hTaskBitmap,hTask_t->priority);
+    hListRemove(&hTaskSuspendList,&(hTask_t->linkNode));
+    Schedule_Exit_Critical(hTaskScheduleState,local_tmp);
+    hTaskSchedule();
 }
 
 
 void hTaskDelay(uint32_t ticks)
 {
+    ScheduleStateType local_tmp;
+    Schedule_Enter_Critical(hTaskScheduleState,local_tmp);
+    if(hTask_t->state != TASK_RUNNING)
+    {
+        Schedule_Exit_Critical(hTaskScheduleState,local_tmp);
+        return;
+    }
     current_hTask_t->delay_ticks = ticks;
-    hTaskChoke(current_hTask_t);
+    hTaskChoke(current_hTask_t,CHOKE_DELAY); //这里只会执行 hTaskChoke 里的逻辑，但是hTaskChoke里面的调度函数不会执行
+    Schedule_Exit_Critical(hTaskScheduleState,local_tmp);
+    hTaskSchedule(); //上面hTaskChoke里面的调度函数不会执行，这里必须补上才能切换任务
 }
 
 void hTask_Param_init(void)

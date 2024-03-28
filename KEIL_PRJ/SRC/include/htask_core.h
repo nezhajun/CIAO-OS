@@ -38,6 +38,12 @@ typedef enum
     TASK_ZOMBIE,
 }hTaskState;
 
+typedef enum
+{
+    CHOKE_DELAY,
+    CHOKE_EVENT,
+}hTaskChokeType;
+
 typedef struct _hTask
 {
     hTaskStack * stack;
