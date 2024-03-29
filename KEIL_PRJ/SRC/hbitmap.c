@@ -12,7 +12,7 @@ void hBitmapSet (hBitmap * hBitmap_t, unsigned int pos)
 
 void hBitmapClear (hBitmap * hBitmap_t, unsigned int pos)
 {
-    hBitmap_t->bitmap &=(1<<pos);
+    hBitmap_t->bitmap &=~(1<<pos);
 }
 
 unsigned int hBitmapGetFirstSet(hBitmap * hBitmap_t)

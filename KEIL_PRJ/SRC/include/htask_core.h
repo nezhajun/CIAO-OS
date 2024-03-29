@@ -55,14 +55,14 @@ typedef struct _hTask
     hTaskState state;
 }hTask;
 
-#define Schedule_Enter_Critical(ScheduleState_,local_tmp_) { \
-    local_tmp_ = ScheduleState_; \
-    ScheduleState_ = ScheduleDisable; \
-}
+// #define Schedule_Enter_Critical(ScheduleState_,local_tmp_) { \
+//     local_tmp_ = ScheduleState_; \
+//     ScheduleState_ = ScheduleDisable; \
+// }
 
-#define Schedule_Exit_Critical(ScheduleState_,local_tmp_) { \
-    ScheduleState_ = local_tmp_; \
-}
+// #define Schedule_Exit_Critical(ScheduleState_,local_tmp_) { \
+//     ScheduleState_ = local_tmp_; \
+// }
 
 inline void hTaskSwitch (void)
 {

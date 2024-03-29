@@ -413,6 +413,11 @@
               <FileType>1</FileType>
               <FilePath>.\SRC\switch.c</FilePath>
             </File>
+            <File>
+              <FileName>hcpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\SRC\hcpu.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

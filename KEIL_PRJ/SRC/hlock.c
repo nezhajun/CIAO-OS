@@ -14,8 +14,7 @@ void sema_init(SemaphoreType *semaphore_t, unsigned char value)
 
 void sem_up(SemaphoreType *semaphore_t)
 {
-    ScheduleStateType local_tmp;
-    Schedule_Enter_Critical(hTaskScheduleState,local_tmp);
+    unsigned int crit_tmp = hTaskEnterCritical();
     if (semaphore_t->hTaskWaitList.hNode_head != (void *)0)
     {
         hNode * node_t = semaphore_t->hTaskWaitList.hNode_head;
@@ -24,8 +23,8 @@ void sem_up(SemaphoreType *semaphore_t)
         hTaskWakeUp(htask_t);
     }
     semaphore_t->value++;
-    Schedule_Exit_Critical(hTaskScheduleState,local_tmp);
     hTaskSchedule();
+    hTaskExitCritical(crit_tmp);
 }
 
 void hLock_init(hLock * hLock_t)
@@ -39,10 +38,7 @@ void hLock_init(hLock * hLock_t)
 void hLock_acquire(hLock * hLock_t)
 {
     ScheduleStateType local_tmp;
-    Schedule_Enter_Critical(hTaskScheduleState,local_tmp);
 
-
-    Schedule_Exit_Critical(hTaskScheduleState,local_tmp);
 }
 
 void hLock_release(hLock * hLock_t)

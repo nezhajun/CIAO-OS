@@ -1,4 +1,5 @@
 #include "ARMCM3.h"
+#include "htask.h"
 
 void tSetSysTickPeriod (unsigned int ms)
 {

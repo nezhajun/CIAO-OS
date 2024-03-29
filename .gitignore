@@ -1,4 +1,5 @@
 !.gitignore
 KEIL_PRJ/Listings/*
 KEIL_PRJ/Objects/*
-test111
+linux_test.c
+a.exe

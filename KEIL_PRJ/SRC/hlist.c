@@ -55,9 +55,10 @@ void hListRemove (hList * list_t, hNode * node_t)
 {
     if( list_t->hNode_head == (void *)0) //only hNode_head
         return;
-    if(node_t->next == node_t) // only one node
+    if(list_t->hNode_head == node_t && node_t->next == node_t) // only one node
     {
         list_t->hNode_head = (void*)0;
+		node_t->next = node_t->prev = node_t;
         list_t->Node_count --;
     }
     else
