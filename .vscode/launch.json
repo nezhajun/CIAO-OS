@@ -1,0 +1,76 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch os",
+            // "type": "cppdbg",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/boot/boot.elf",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}/",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "x86_64-elf-gdb",
+            "miDebuggerServerAddress": "127.0.0.1:1234",
+            "targetArchitecture": "x86",
+            "stopAtConnect": true,
+            "windows": {
+                "preLaunchTask": "start-qemu"
+            },
+            "customLaunchSetupCommands": [],
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to AT&T",
+                    "text": "-gdb-set disassembly-flavor att",
+                    "ignoreFailures": false
+                },
+               // {
+               //     "description": "Set Disassembly Flavor to Intel",
+               //     "text": "-gdb-set disassembly-flavor intel",
+               //     "ignoreFailures": true
+               // },
+//                {
+//                    "description": "设置体系结构",
+//                    "text": "-gdb-set arch i8086",
+//                    "ignoreFailures": false
+//                }
+            ],
+            //gdb连接后的设置
+            "postRemoteConnectCommands": [  
+               {
+                    "description": "加载内核符号文件",
+                    "text": "-file-symbol-file D:/shi18/Workspace/Repository/nezhajun/learn-200lines-os/src/boot/boot.elf",
+                    "ignoreFailures": false
+                },
+                {
+                    "description": "加载内核符号文件",
+                    "text": "add-symbol-file D:/shi18/Workspace/Repository/nezhajun/learn-200lines-os/src/loader/loader.elf 0x8000",
+                    "ignoreFailures": false
+                },
+                {
+                    "description": "加载内核符号文件",
+                    "text": "add-symbol-file D:/shi18/Workspace/Repository/nezhajun/learn-200lines-os/src/kernel/kernel.elf 0x10000",
+                    "ignoreFailures": false
+                },
+               {
+                    "description": "运行至0x7c00",
+                    "text": "-exec-until *0x7c00",
+                    "ignoreFailures": false
+                },
+            ],
+        }
+
+
+    ]
+}

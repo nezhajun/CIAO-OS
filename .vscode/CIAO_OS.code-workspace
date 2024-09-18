@@ -1,0 +1,39 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"editor.fontSize": 21,
+		// "cmake.sourceDirectory": "${workspaceFolder}/src",
+		"terminal.integrated.env.windows": {
+				"Path": "${env:Path};D:\\CODE\\x86_64-elf-tools-windows\\bin\\dd_tools"
+			},
+			"files.associations": {
+				"test.h": "c",
+				"loader.h": "c",
+				"types.h": "c",
+				"boot_info.h": "c",
+				"loader16.h": "c",
+				"elf.h": "c",
+				"elf32.h": "c",
+				"string.h": "c",
+				"cpu_instr.h": "c",
+				"cpu.h": "c",
+				"irq.h": "c",
+				"printk.h": "c",
+				"kernel_test.h": "c",
+				"task.h": "c",
+				"boot.h": "c",
+				"clist.h": "c",
+				"cbitmap.h": "c",
+				"ctask.h": "c",
+				"timer.h": "c",
+				"init.h": "c",
+				"sem.h": "c"
+			},
+		"C_Cpp.intelliSenseEngine": "disabled",
+		"C_Cpp.default.compilerPath": ""
+	}
+}
